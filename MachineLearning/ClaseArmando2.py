@@ -1,52 +1,44 @@
-##Calcularemos las distancias entre todos los pares de putnos y determinaremos cuales estan mas alejados entre si y cuales estan mas cercanos utilizando las distancias Euclidiana, Manhattan y Chebyshev
-
 import numpy as np
 import pandas as pd
 from scipy.spatial import distance
 
-#Definimos las cordenadas de las tiendas
-puntos={
-    'Punto A':(2,3),
-    'Punto B':(5,4),
-    'Punto C':(1,1),
-    'Punto D':(6,7),
-    'Punto E':(3,5),
-    'Punto F':(8,2),
-    'Punto G':(4,6),
-    'Punto H':(2,1),
-    
+# Definir las coordenadas de los puntos
+puntos = {
+    'Punto A': (2, 3),
+    'Punto B': (5, 4),
+    'Punto C': (1, 1),
+    'Punto D': (6, 7),
+    'Punto E': (3, 5),
+    'Punto F': (8, 2),
+    'Punto G': (4, 6),
+    'Punto H': (2, 1)
 }
 
-#Convertir las cordenadas a un dataframe para facilitar el calculo
-df_puntos=pd.DataFrame(puntos).T
-df_puntos.columns=['x','y']
-print("coordenadas de las tiendas:")
+# Convertir las coordenadas a un DataFrame para facilitar el cálculo
+df_puntos = pd.DataFrame(puntos).T
+df_puntos.columns = ['x', 'y']
+print("Coordenadas de los puntos:")
 print(df_puntos)
 
-def calcular_distancias(puntos):
-    distancias=pd.DataFrame(index=df_puntos.index, columns=df_puntos.index)
-    #Calculo de distancias
-    for i in df_puntos.index:
-        for j in df_puntos.index:
-            if i!=j: #No calcula la distancia del lmismo punto
-                #Distancias euclidianas:
-                distancias.loc[i,j]=distance.euclidean(df_puntos.loc[i],df_puntos.loc[j])
-    return distancias
-distancias=calcular_distancias(puntos)
-valor_maximo=distancias.values.max()
-(punto1,punto2)=distancias.stack().idxmax()
-print("Tabla de distancias")
-print(distancias)
-print("Distancia maxima", valor_maximo)
-print("Entre el punto", punto1, "; y el punto ", punto2)
+# Inicializar DataFrames para almacenar las distancias
+distancias_eu = pd.DataFrame(index=df_puntos.index, columns=df_puntos.index)
+distancias_mh = pd.DataFrame(index=df_puntos.index, columns=df_puntos.index)
+distancias_ch = pd.DataFrame(index=df_puntos.index, columns=df_puntos.index)
 
-##Otra manera
-max_value=distancias.max().max()
-#obtener la columna que contiene el valor mxicmo 
-col_max=distancias.max().idxmax()
-#obtenemos el inide fila que contiene el valor maximo
-id_max=distancias[col_max].idxmax()
+# Calcular las distancias
+for i in df_puntos.index:
+    for j in df_puntos.index:
+        # Distancias euclidianas:
+        distancias_eu.loc[i, j] = distance.euclidean(df_puntos.loc[i], df_puntos.loc[j])
+        # Distancias Manhattan:
+        distancias_mh.loc[i, j] = distance.cityblock(df_puntos.loc[i], df_puntos.loc[j])
+        # Distancias Chebyshev:
+        distancias_ch.loc[i, j] = distance.chebyshev(df_puntos.loc[i], df_puntos.loc[j])
 
-print(f'valor maximo: {max_value}')
-print(f'columna: {col_max}')
-print(f'indice: {id_max}')
+# Mostrar los resultados
+print("\nDistancias euclidianas entre los puntos: ")
+print(distancias_eu)
+print("\nDistancias Manhattan entre los puntos: ")
+print(distancias_mh)
+print("\nDistancias Chebyshev entre los puntos: ")
+print(distancias_ch)
